@@ -190,6 +190,32 @@ const categories = getUniqueCategories(rows);
 renderCategories(categories);
 const grouped = groupByCategory(rows);
 renderItemsByCategory(grouped);
+
+//carga del csv
+
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjV9ccV-RcbEXf5nIEkgMMzu1YAplQBBVwPsnxrS1vpxb28Aibw05yI3p_fPoV8no-YhyuaWMz-ZcZ/pub?output=csv";
+
+    async function loadCSVData() {
+      try {
+        const response = await fetch(csvUrl);
+        const text = await response.text();
+
+        // Si querés imprimirlo en el formato original (backticks):
+        const csvData = `\n${text.trim()}`;
+        console.log("CSV cargado como string:");
+        console.log(csvData);
+
+      } catch (error) {
+        console.error("Error al cargar el CSV:", error);
+      }
+    }
+
+    // Cargar ni bien abre la página
+    loadCSVData();
+
+//fin carga csv
+
+
 </script>
 
 </body>
