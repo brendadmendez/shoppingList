@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shopping List by Category</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 1rem; }
+  #categories div, #list .category { margin-bottom: 1rem; }
+  #list .item { margin-left: 1.5rem; }
+  #result { margin-top: 1rem; border: 1px solid #ccc; padding: 1rem; background: #f9f9f9; }
+  button { margin-right: 0.5rem; }
+</style>
+</head>
+<body>
+
+<h1>Shopping List</h1>
+
+<div id="categories"></div>
+<div id="list"></div>
+
+<button id="confirm">Confirm</button>
+<button id="reset">Reset</button>
+<button id="back" style="display:none;">Back</button>
+
+<div id="result" style="display:none;">
+  <h2>Items you need:</h2>
+  <ul id="needed"></ul>
+</div>
+
+<script>
+const csvData = `salt,food
+eggs,food
+pasta,food
+protein freezer,food
+ham,food
+soap,clean
+detersivo,clean
+napkin,clean
+tooth paste,clean
+deodorant,clean`;
+
+function csvToArray(str, delimiter = ",") {
+  const lines = str.trim().split(/\r?\n/);
+  return lines.map(line => line.split(delimiter));
+}
+
+function groupByCategory(data) {
+  const map = {};
+  data.forEach(([item, category]) => {
+    if (!item || !category) return;
+    if (!map[category]) map[category] = [];
+    map[category].push(item);
+  });
+  return map;
+}
+
+function getUniqueCategories(data) {
+  const categoriesSet = new Set();
+  data.forEach(([item, category]) => {
+    if (category) categoriesSet.add(category);
+  });
+  return Array.from(categoriesSet);
+}
+
+function renderCategories(categories) {
+  const container = document.getElementById("categories");
+  container.innerHTML = "<h2>Categories</h2>";
+  categories.forEach(cat => {
+    const div = document.createElement("div");
+    div.className = "category-checkbox";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = `cat-${cat}`;
+    checkbox.dataset.category = cat;
+    checkbox.checked = true;
+
+    checkbox.addEventListener("change", (e) => {
+      const checked = e.target.checked;
+      const itemsDiv = document.getElementById(`items-${cat}`);
+      if (itemsDiv) {
+        itemsDiv.style.display = checked ? "block" : "none";
+      }
+    });
+
+    const label = document.createElement("label");
+    label.htmlFor = `cat-${cat}`;
+    label.textContent = cat;
+
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    container.appendChild(div);
+  });
+}
+
+function renderItemsByCategory(groupedItems) {
+  const listEl = document.getElementById("list");
+  listEl.innerHTML = "";
+
+  for (const category in groupedItems) {
+    const container = document.createElement("div");
+    container.className = "category";
+    container.id = `items-${category}`;
+
+    const title = document.createElement("h3");
+    title.textContent = category;
+    container.appendChild(title);
+
+    groupedItems[category].forEach(item => {
+      const div = document.createElement("div");
+      div.className = "item";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = `cb-${item.replace(/\s+/g,'-')}`;
+      checkbox.dataset.item = item;
+      checkbox.dataset.category = category;
+      checkbox.checked = false;
+
+      const label = document.createElement("label");
+      label.htmlFor = `cb-${item.replace(/\s+/g,'-')}`;
+      label.textContent = item;
+
+      div.appendChild(checkbox);
+      div.appendChild(label);
+      container.appendChild(div);
+    });
+
+    listEl.appendChild(container);
+  }
+}
+
+function getCheckedItems() {
+  const checkedCategories = new Set(
+    Array.from(document.querySelectorAll("#categories input[type=checkbox]:checked"))
+         .map(cb => cb.dataset.category)
+  );
+
+  return Array.from(document.querySelectorAll("#list input[type=checkbox]:checked"))
+    .filter(cb => cb.dataset.item && checkedCategories.has(cb.dataset.category))
+    .map(cb => cb.dataset.item);
+}
+
+function showResult(needed) {
+  const resultBox = document.getElementById("result");
+  const ul = document.getElementById("needed");
+  ul.innerHTML = needed.length
+    ? needed.map(i => `<li>${i}</li>`).join("")
+    : "<li>You're all set!</li>";
+  resultBox.style.display = "block";
+
+  document.getElementById("categories").style.display = "none";
+  document.getElementById("list").style.display = "none";
+  document.getElementById("confirm").style.display = "none";
+  document.getElementById("reset").style.display = "none";
+  document.getElementById("back").style.display = "inline-block";
+}
+
+function resetUI() {
+  document.querySelectorAll("#categories input[type=checkbox]").forEach(cb => cb.checked = true);
+  document.querySelectorAll("#list > div").forEach(div => div.style.display = "block");
+  document.querySelectorAll("#list input[type=checkbox]").forEach(cb => cb.checked = false);
+  document.getElementById("result").style.display = "none";
+  document.getElementById("back").style.display = "none";
+  document.getElementById("categories").style.display = "block";
+  document.getElementById("list").style.display = "block";
+  document.getElementById("confirm").style.display = "inline-block";
+  document.getElementById("reset").style.display = "inline-block";
+}
+
+document.getElementById("confirm").addEventListener("click", () => {
+  const needed = getCheckedItems();
+  showResult(needed);
+});
+
+document.getElementById("reset").addEventListener("click", resetUI);
+
+document.getElementById("back").addEventListener("click", () => {
+  document.getElementById("result").style.display = "none";
+  document.getElementById("back").style.display = "none";
+  document.getElementById("categories").style.display = "block";
+  document.getElementById("list").style.display = "block";
+  document.getElementById("confirm").style.display = "inline-block";
+  document.getElementById("reset").style.display = "inline-block";
+});
+
+const rows = csvToArray(csvData);
+const categories = getUniqueCategories(rows);
+renderCategories(categories);
+const grouped = groupByCategory(rows);
+renderItemsByCategory(grouped);
+</script>
+
+</body>
+</html>
