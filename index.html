@@ -105,15 +105,8 @@ body {
  
 </div>
 
-<script>
-const csvData = `salt,food
+<script>var csvData = `salt,food
 eggs,food
-pasta,food
-protein freezer,food
-ham,food
-soap,clean
-detersivo,clean
-napkin,clean
 tooth paste,clean
 deodorant,clean`;
 
@@ -262,11 +255,7 @@ document.getElementById("back").addEventListener("click", () => {
   document.getElementById("reset").style.display = "inline-block";
 });
 
-const rows = csvToArray(csvData);
-const categories = getUniqueCategories(rows);
-renderCategories(categories);
-const grouped = groupByCategory(rows);
-renderItemsByCategory(grouped);
+
 
 //carga del csv
 
@@ -278,9 +267,14 @@ renderItemsByCategory(grouped);
         const text = await response.text();
 
         // Si querés imprimirlo en el formato original (backticks):
-        const csvData = `\n${text.trim()}`;
+        csvData = `\n${text.trim()}`;
         console.log("CSV cargado como string:");
         console.log(csvData);
+        const rows = csvToArray(csvData);
+        const categories = getUniqueCategories(rows);
+        renderCategories(categories);
+        const grouped = groupByCategory(rows);
+        renderItemsByCategory(grouped);
 
       } catch (error) {
         console.error("Error al cargar el CSV:", error);
@@ -291,6 +285,7 @@ renderItemsByCategory(grouped);
     loadCSVData();
 
 //fin carga csv
+
 
 
 </script>
