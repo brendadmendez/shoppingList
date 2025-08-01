@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Shopping List by Category</title>
 <style>
-   #main-container {
+    #main-container {
      max-width: 500px;
      margin: auto;
 }
@@ -41,15 +41,14 @@ body {
 }
  #actions {
      text-align: center;
-     m.argin-top: 1rem;
+     margin-top: 1rem;
 }
 .actions {
   display: flex;
   justify-content: space-between;
-/*   max-width: 400px;
-  margin: auto; */
-  padding: 1rem;
+  padding: 0 1rem;
 }
+
  button {
      padding: 0.5rem 1rem;
      margin: 0.5rem;
@@ -57,16 +56,12 @@ body {
      border-radius: 8px;
      cursor: pointer;
 }
- #confirm {
+ #confirm, #print  {
      background-color: #4caf50;
      color: white;
 }
- #reset {
+ #reset, #back {
      background-color: #f44336;
-     color: white;
-}
- #back {
-     background-color: blue;
      color: white;
 }
  #result {
@@ -84,6 +79,7 @@ body {
   flex-wrap: wrap; /* permite que se ajusten si no hay espacio */
  } 
 
+
 </style>
 </head>
 <body>
@@ -91,21 +87,30 @@ body {
 <h1>Shopping List</h1>
 
 <div id="main-container">
-<div id="categories"></div>
-<div id="list"></div>
+  <div id="categories"></div>
+  <div id="list"></div>
 
-<button id="reset">Reset</button>
-<button id="confirm">Confirm</button>
 
-<div id="result" style="display:none;">
-  <h2>Items you need:</h2>
-  <ul id="needed"></ul>
-</div>
-<button id="back" style="display:none;">Back</button>
+
+  <div id="result" style="display:none;">
+    <h2>Items you need:</h2>
+    <ul id="needed"></ul>
+  </div>
+
+  <div class="actions">
+    <button id="reset">Reset</button>
+    <button id="confirm">Confirm</button>
+    <button id="back" style="display:none;">Back</button>
+    <button id="print" style="display:none;">Share</button>
+  </div>
  
 </div>
 
-<script>var csvData = `salt,food
+</body>
+
+<script>
+
+var csvData = `salt,food
 eggs,food
 tooth paste,clean
 deodorant,clean`;
@@ -135,7 +140,7 @@ function getUniqueCategories(data) {
 
 function renderCategories(categories) {
   const container = document.getElementById("categories");
-  container.innerHTML = "<h2>Categories</h2>";
+  container.innerHTML = "";
   categories.forEach(cat => {
     const div = document.createElement("div");
     div.className = "category-checkbox";
@@ -225,6 +230,9 @@ function showResult(needed) {
   document.getElementById("confirm").style.display = "none";
   document.getElementById("reset").style.display = "none";
   document.getElementById("back").style.display = "inline-block";
+  
+   document.getElementById("print").style.display = "inline-block";
+
 }
 
 function resetUI() {
@@ -233,6 +241,7 @@ function resetUI() {
   document.querySelectorAll("#list input[type=checkbox]").forEach(cb => cb.checked = false);
   document.getElementById("result").style.display = "none";
   document.getElementById("back").style.display = "none";
+  document.getElementById("print").style.display = "none";
   document.getElementById("categories").style.display = "block";
   document.getElementById("list").style.display = "block";
   document.getElementById("confirm").style.display = "inline-block";
@@ -249,11 +258,35 @@ document.getElementById("reset").addEventListener("click", resetUI);
 document.getElementById("back").addEventListener("click", () => {
   document.getElementById("result").style.display = "none";
   document.getElementById("back").style.display = "none";
+  document.getElementById("print").style.display = "none";
   document.getElementById("categories").style.display = "block";
   document.getElementById("list").style.display = "block";
   document.getElementById("confirm").style.display = "inline-block";
   document.getElementById("reset").style.display = "inline-block";
 });
+
+document.getElementById("print").addEventListener("click", () => {
+  const text = document.getElementById("needed").innerText;
+  
+  //copyText
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      alert("Text copied to clipboard!");
+    })
+    .catch(err => {
+      console.error("Failed to copy text: ", err);
+    });
+  
+  //share on whatsapp
+  const encodedText = encodeURIComponent(text);
+  const url = `https://wa.me/?text=${encodedText}`;
+  window.open(url, '_blank');
+  
+});
+
+
+
+
 
 
 
@@ -285,6 +318,7 @@ document.getElementById("back").addEventListener("click", () => {
     loadCSVData();
 
 //fin carga csv
+
 
 
 
