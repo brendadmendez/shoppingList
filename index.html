@@ -3,84 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" type="text/css" href="styles.css" />
 <title>Shopping List by Category</title>
-<style>
-    #main-container {
-     max-width: 500px;
-     margin: auto;
-}
-body {
-     font-family: Arial, sans-serif;
-     background: #f0f0f0;
-     padding: 1rem;
-}
- h1 {
-     text-align: center;
-}
- .category {
-     max-width: 500px;
-     margin: 1rem auto;
-     background: #fff;
-     padding: 1rem;
-     border-radius: 12px;
-     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
- .category h2 {
-     margin-top: 0;
-     font-size: 1.2rem;
-     border-bottom: 1px solid #ccc;
-     padding-bottom: 0.3rem;
-}
- .item {
-     display: flex;
-     align-items: center;
-     margin: 0.3rem 0;
-}
- .item label {
-     margin-left: 0.5rem;
-}
- #actions {
-     text-align: center;
-     margin-top: 1rem;
-}
-.actions {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 1rem;
-}
-
- button {
-     padding: 0.5rem 1rem;
-     margin: 0.5rem;
-     border: none;
-     border-radius: 8px;
-     cursor: pointer;
-}
- #confirm, #print  {
-     background-color: #4caf50;
-     color: white;
-}
- #reset, #back {
-     background-color: #f44336;
-     color: white;
-}
- #result {
-     max-width: 500px;
-     margin: 1rem auto;
-     background:#fff;
-     padding: 1rem;
-     border-radius: 12px;
-     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-     display: none;
-}
-.category-checkbox{
- display: flex;
-  gap: 1rem; /* espacio entre ellos */
-  flex-wrap: wrap; /* permite que se ajusten si no hay espacio */
- } 
-
-
-</style>
 </head>
 <body>
 
@@ -93,7 +17,7 @@ body {
 
 
   <div id="result" style="display:none;">
-    <h2>Items you need:</h2>
+    <h2>To Buy:</h2>
     <ul id="needed"></ul>
   </div>
 
@@ -266,7 +190,7 @@ document.getElementById("back").addEventListener("click", () => {
 });
 
 document.getElementById("print").addEventListener("click", () => {
-  const text = document.getElementById("needed").innerText;
+  const text = "Comprar: " + document.getElementById("needed").innerText;
   
   //copyText
   navigator.clipboard.writeText(text)
@@ -283,12 +207,6 @@ document.getElementById("print").addEventListener("click", () => {
   window.open(url, '_blank');
   
 });
-
-
-
-
-
-
 
 //carga del csv
 
@@ -318,9 +236,6 @@ document.getElementById("print").addEventListener("click", () => {
     loadCSVData();
 
 //fin carga csv
-
-
-
 
 </script>
 
